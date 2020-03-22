@@ -3,8 +3,9 @@ const _ = require('underscore');
 const express = require('express');
 const app = express();
 const Usuario = require('../models/usuario');
+const {checkToken, checkAdminRole} = require('../middlewares/authentication');
 
-app.get('/usuario', (req, resp) => {
+app.get('/usuario', checkToken, (req, resp) => {
     
     let desde = req.query.desde || 0;
     desde=Number(desde);
@@ -37,7 +38,7 @@ app.get('/usuario', (req, resp) => {
             })
 })
 
-app.post('/usuario', function (req, res) {
+app.post('/usuario', [checkToken, checkAdminRole], function (req, res) {
 
     let body = req.body;
     
@@ -64,7 +65,7 @@ app.post('/usuario', function (req, res) {
 
 });
 
-app.put('/usuario/:id', function (req, res) {
+app.put('/usuario/:id', [checkToken, checkAdminRole], function (req, res) {
 
     let id = req.params.id;
     let body = _.pick(req.body, ['name','email','img','role','estado']);
@@ -82,7 +83,7 @@ app.put('/usuario/:id', function (req, res) {
     })
 });
 
-app.delete('/usuario/:id', function (req, res) {
+app.delete('/usuario/:id', [checkToken, checkAdminRole], function (req, res) {
 
     let id = req.params.id;
 
